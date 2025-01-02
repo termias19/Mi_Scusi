@@ -13,7 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm ci && npm run build
+      - name: Install Flutter
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl unzip xz-utils libglu1-mesa
+          curl -o flutter.tar.xz https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_latest.tar.xz
+          tar -xf flutter.tar.xz
+          export PATH="$PATH:`pwd`/flutter/bin"
+          flutter doctor
+      - name: Build Flutter Web
+        run: flutter build web
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
